@@ -4,11 +4,35 @@
 <head>
     <title>Zick Chat App </title>
     <meta charset="utf-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
     <script src="app.js"></script>
+    <link href="main.css" rel="stylesheet" type="text/css">
 </head>
-
 <body>
+  <header>
+    <h1> Zick Chat App</h1>
+    <h3>Du är inte inloggad! <button id="loginBtn"></button></h3>
+  </header>
+
+  <div id="messageBox">
+    <form name="msg">
+      <textarea name="msg" id="msgArea" placeholder="Skriv ett meddelande..."></textarea>
+      <button name="msg" type="submit">Skicka</button>
+    </form>
+  </div>
+
+  <main>
+
+  </main>
+
+  <div id="modal">
+    <div id="modalContent">
+      <h2>Ange ditt namn: </h2>
+      <input type="text" id="namnInput">
+      <button id="saveBtn">Spara</button>
+    </div>
+  </div>
 
 </body>
 
