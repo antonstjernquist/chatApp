@@ -77,28 +77,32 @@ class Message {
     this.ratedUsers = [];
     db.ref(`posts/${newPostKey}`).set(this);
   }
+  // Delete the message in the DOM and In the DB
   removeMessage() {
-    // Delete the message in the DOM and In the DB
     db.ref(`posts/${this.id}`).remove();
   }
+  // Rösta +1
   upvote() {
-    if (true) {
+    if (this.ratedUsers.includes(localStorage.getItem('username'))) {
       console.log("You can't rate again");
-      return false;
-    } else {
+      return;
+    } else if (this.rated === false) {
       this.rating++;
-      this.ratedUsers.push(this.name);
+      this.ratedUsers.push(localStorage.getItem('username'));
     }
   }
+  // Rösta -1
   downvote() {
-    this.rating--;
+    if (this.ratedUsers.includes(localStorage.getItem('username'))) {
+      console.log("You can't rate again");
+    } else {
+      this.rating--;
+      this.ratedUsers.push(localStorage.getItem('username'));
+    }
   }
 }
-
-
 /* let myMessage = new Message(message)*/
 
-// Ska vi testa lägga till ett meddelande direkt i databasen? under posts/
 
 /* Display Messages */
 db.ref('posts/').on('value', function(snapshot) {
