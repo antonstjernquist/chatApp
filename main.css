@@ -71,7 +71,7 @@
     left: -5px;
     bottom: -1px;
     cursor: pointer;
-    color: #a1a1a1;
+    color: rgb(96, 198, 94);
   }
   .upvote:hover {
     color: rgb(65, 160, 249);
@@ -81,7 +81,7 @@
     left: -5px;
     bottom: -52px;
     cursor: pointer;
-    color: #a1a1a1;
+    color: rgb(249, 81, 65);
   }
   .downvote:hover {
     color: rgb(65, 160, 249);

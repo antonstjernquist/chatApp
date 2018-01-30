@@ -74,8 +74,6 @@ $(window).on('load', function() {
   //EventListener for sending message.
   $(document).on('click', '#formBtn', function (event){
     let message = $('#msgArea').val();
-
-
     // Make some checks for the message before creating it.
     if(message.length < 3){
       console.log('Meddelandet är för kort.');
@@ -192,7 +190,7 @@ function setupLogin() {
 }
 
 function setupLogout() {
-  $('#logStatus').text("Du är inloggad!");
+  $('#logStatus').text(`Välkommen ${localStorage.getItem('username')} <3`);
   $('#loginBtn').text('Logga Ut');
   console.log("Logged out");
 
