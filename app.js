@@ -49,16 +49,17 @@ $(window).on('load', function() {
     /* Add addEventListener for modal */
     addModalListeners();
   }
-  // Fixes the textarea
-  $('#msgArea').autoResize();
-
   // Rate eventListeners
   $(document).on('click', '.upvote', function (event) {
-    // "THISMESSAGE".upvote();
+    // "THISMESSAGE OBJECT".upvote();
   });
   $(document).on('click', '.downvote', function (event) {
     // "THISMESSAGE".downvote();
   });
+  if (localStorage.getItem('username') === null){
+      $('#formBtn').prop("disabled",true);
+      $('#formBtn').text('Log in to send message');
+  }
 
 
   // Click outside
