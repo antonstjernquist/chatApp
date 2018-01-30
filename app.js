@@ -145,7 +145,7 @@ db.ref('posts/').on('value', function(snapshot) {
       <p>${msgObj.message}</p>`);
 
     if (localStorage.getItem('username') != null){
-      $('main').append(messageDiv);
+      $('main').prepend(messageDiv);
     }
   }
 });
