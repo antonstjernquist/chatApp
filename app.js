@@ -39,17 +39,27 @@ Storage.prototype.getObject = function(key) {
 };
 // https://oscarotero.com/jquery/  Jquery cheatsheet
 $(window).on('load', function() {
-  localStorage.removeItem('username');
+ //  localStorage.removeItem('username'); // REMOVES ITEM DEVELOP ONLY
   if (localStorage.getItem('username') != null) {
     console.log('User is logged in and the username is: ' + localStorage.getItem('username'));
     setupLogout();
   } else {
     setupLogin();
-
     toggleModal();
     /* Add addEventListener for modal */
     addModalListeners();
   }
+  // Fixes the textarea
+  $('#msgArea').autoResize();
+
+  // Rate eventListeners
+  $(document).on('click', '.upvote', function (event) {
+    // "THISMESSAGE".upvote();
+  });
+  $(document).on('click', '.downvote', function (event) {
+    // "THISMESSAGE".downvote();
+  });
+
 
   // Click outside
   if ($('#modal').is(":visible")) {
@@ -103,30 +113,23 @@ class Message {
 }
 /* let myMessage = new Message(message)*/
 
-
 /* Display Messages */
 db.ref('posts/').on('value', function(snapshot) {
-
   let data = snapshot.val();
-
   for (let object in data) {
-
     // console.log('Object: ', object);
-
     let msgObj = data[object];
-
-
     const messageDiv = $("<div></div>").html(`
+      <div class="rating"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
       <div><h2>${msgObj.name}</h2>
       <p class="time">${msgObj.time}</p></div>
       <p>Meddelande: ${msgObj.message}</p>`);
 
-    // Vad ska det vara här?
-    $('main').append(messageDiv);
+    if (localStorage.getItem('username') != null){
+      $('main').append(messageDiv);
+    }
   }
 });
-
-
 
 
 /* Functions */
@@ -140,8 +143,11 @@ function addModalListeners() {
 
     setUsername(name);
     toggleModal();
-
     console.log("Username has been set to: " + name);
+    setTimeout(function(){
+      location.reload();
+    },100)
+
   });
 }
 
@@ -152,10 +158,11 @@ function setUsername(name) {
 
 function logoutUser() {
   localStorage.removeItem('username');
+  location.reload();
 }
 
 function setupLogin() {
-
+  $('#logStatus').text("Du är INTE inloggad!");
   $('#loginBtn').text('Logga In');
   console.log("Logged in");
 
@@ -165,7 +172,7 @@ function setupLogin() {
 }
 
 function setupLogout() {
-
+  $('#logStatus').text("Du är inloggad!");
   $('#loginBtn').text('Logga Ut');
   console.log("Logged out");
 

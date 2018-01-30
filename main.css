@@ -26,11 +26,10 @@
   }
   button {
     padding: 5px 15px;
-    margin: 0 5px;
     background-color: #222;
     color: #fff;
     vertical-align: 3px;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
     outline: none;
     border: none;
@@ -53,6 +52,40 @@
     padding: 10px 25px 10px 0px;
     text-align: center;
   }
+  .rating {
+    display: inline-block;
+    position: relative;
+    left: -60px;
+    font-size: 1.2em;
+    top: 48px;
+    font-family: arial;
+  }
+
+  .vote {
+    position: absolute;
+    display: inline-block;
+    font-size: 1.2em;
+    color: rgb(99, 99, 99);
+  }
+  .upvote {
+    left: -5px;
+    bottom: -1px;
+    cursor: pointer;
+    color: #a1a1a1;
+  }
+  .upvote:hover {
+    color: rgb(65, 160, 249);
+  }
+  .downvote{
+    transform: rotate(180deg);
+    left: -5px;
+    bottom: -52px;
+    cursor: pointer;
+    color: #a1a1a1;
+  }
+  .downvote:hover {
+    color: rgb(65, 160, 249);
+  }
 
   textarea {
     background-color: #fff;
@@ -62,22 +95,36 @@
     width: 100%;
     border-radius: 5px;
     min-height: 100px;
+    border: 1px solid rgba(219, 219, 218, 0.77);
+    resize: none;
   }
+  textarea:focus {
+    box-shadow: 0 0 2px 4px rgb(65, 160, 249);
+    border: 1px solid transparent;
+  }
+  #loginBtn {
+    display: block;
+    width: 100%;
 
+  }
   /* Message layout */
 
   main > div {
-    background-color: #222;
-    color: #fff;
+    background-color: #363636;
+    color: #dddddd;
     padding: 10px 25px;
     margin: 10px auto;
-    border-radius: 5px;
+    border-radius: 4px;
     width: 50%;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    position: relative;
+    box-shadow: 0px 5px 5px 2px #3b3b3b;
   }
-
+  .time {
+    color: #7a7a7a;
+  }
   main > div > div {
     display: flex;
     justify-content: space-between;
