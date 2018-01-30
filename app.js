@@ -71,6 +71,23 @@ $(window).on('load', function() {
     });
   }
 
+  //EventListener for sending message.
+  $(document).on('click', '#formBtn', function (event){
+    let message = $('#msgArea').val();
+
+
+    // Make some checks for the message before creating it.
+    if(message.length < 3){
+      console.log('Meddelandet är för kort.');
+    } else if (message.length > 2048){
+      console.log('Meddelandet är för långt.');
+    } else if (message == undefined){
+      console.log('Inget meddelandet har specificerats.');
+    } else {
+      new Message(message);
+    }
+  });
+
 }); // End of callback
 
 // Classes
@@ -112,6 +129,7 @@ class Message {
     }
   }
 }
+
 /* let myMessage = new Message(message)*/
 
 /* Display Messages */
@@ -124,7 +142,7 @@ db.ref('posts/').on('value', function(snapshot) {
       <div class="rating"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
       <div><h2>${msgObj.name}</h2>
       <p class="time">${msgObj.time}</p></div>
-      <p>Meddelande: ${msgObj.message}</p>`);
+      <p>${msgObj.message}</p>`);
 
     if (localStorage.getItem('username') != null){
       $('main').append(messageDiv);
@@ -134,6 +152,7 @@ db.ref('posts/').on('value', function(snapshot) {
 
 
 /* Functions */
+
 function toggleModal() {
   $('#modal').fadeToggle("fast", "linear");
 }
