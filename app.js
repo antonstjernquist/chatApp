@@ -153,14 +153,6 @@ db.ref('posts/').on('value', function(snapshot) {
 
 /* Functions */
 
-// createMessage('Test');
-//
-// function createMessage(message){
-//
-//   new Message(message);
-//
-// }
-
 function toggleModal() {
   $('#modal').fadeToggle("fast", "linear");
 }
