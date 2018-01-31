@@ -149,7 +149,6 @@ db.ref('posts/').on('value', function(snapshot) {
     if (localStorage.getItem('username') != null){
       if(!displayedMessages.includes(msgObj.id)){ // Om listan inte innehåller id:et. Posta det!
         $('main').prepend(messageDiv);
-
         // Lägg till id:et i listan för meddelanden som redan visas!
         displayedMessages.push(msgObj.id);
       }
