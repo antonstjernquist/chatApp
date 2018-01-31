@@ -45,9 +45,6 @@ $(window).on('load', function() {
     setupLogout();
   } else {
     setupLogin();
-    toggleModal();
-    /* Add addEventListener for modal */
-    addModalListeners();
   }
   // Rate eventListeners
   $(document).on('click', '.upvote', function(event) {
@@ -69,7 +66,7 @@ $(window).on('load', function() {
     $('#formBtn').text('Log in to send message');
   }
 
-
+/*
   // Click outside
   if ($('#modal').is(":visible")) {
     $('#modal').click(function(event) {
@@ -78,21 +75,49 @@ $(window).on('load', function() {
       }
     });
   }
-
+*/
   //EventListener for sending message.
   $(document).on('click', '#formBtn', function(event) {
     let message = $('#msgArea').val();
-    // Make some checks for the message before creating it.
-    if (message.length < 3) {
-      console.log('Meddelandet är för kort.');
-    } else if (message.length > 2048) {
-      console.log('Meddelandet är för långt.');
-    } else if (message == undefined) {
-      console.log('Inget meddelandet har specificerats.');
-    } else {
-      new Message(message);
+    sendMessage(message);
+  });
+
+  //EventListener for center
+  $('#msgArea').keyup(function(event){
+    if(event.keyCode === 13 && !event.shiftKey){
+      let message = $('#msgArea').val();
+      sendMessage(message);
     }
   });
+
+  /* Display Messages */
+  let displayedMessages = [];
+  db.ref('posts/').on('value', function(snapshot) {
+    let data = snapshot.val();
+
+    for (let object in data) {
+      // console.log('Object: ', object);
+      let msgObj = data[object];
+      let messageParagraf = document.createElement('p');
+
+      messageParagraf.innerText = msgObj.message;
+      const messageDiv = $("<div></div>").html(`
+        <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
+        <div><h2>${msgObj.name}</h2>
+        <p class="time">${msgObj.time}</p></div>`);
+        messageDiv.append(messageParagraf);
+
+
+      if (localStorage.getItem('username') != null) {
+        if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
+          $('main').prepend(messageDiv);
+          // Lägg till id:et i listan för meddelanden som redan visas!
+          displayedMessages.push(msgObj.id);
+        }
+      }
+    }
+  });
+
 
 }); // End of callback
 
@@ -117,38 +142,69 @@ class Message {
   }
 }
 
-/* let myMessage = new Message(message)*/
+// Firebase AUTH
+function logIn() {
+  var provider = new firebase.auth.GithubAuthProvider();
+  provider.addScope('repo');
 
-/* Display Messages */
-//Skapa en array tom array utanför loopen.
-
-let displayedMessages = [];
-db.ref('posts/').on('value', function(snapshot) {
-  let data = snapshot.val();
-
-  for (let object in data) {
-    // console.log('Object: ', object);
-    let msgObj = data[object];
-
-
-    const messageDiv = $("<div></div>").html(`
-      <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
-      <div><h2>${msgObj.name}</h2>
-      <p class="time">${msgObj.time}</p></div>
-      <p>${msgObj.message}</p>`);
-
-    if (localStorage.getItem('username') != null) {
-      if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
-        $('main').prepend(messageDiv);
-        // Lägg till id:et i listan för meddelanden som redan visas!
-        displayedMessages.push(msgObj.id);
-      }
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+    // This gives you a GitHub Access Token.
+    var token = result.credential.accessToken;
+    // The signed-in user info.
+    var user = result.user;
+    setInfo(user.displayName, user.photoURL);
+    console.log(user.photoURL); // https://avatars2.githubusercontent.com/u/8511394?v=4
+    location.reload();
+  }).catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // The email of the user's account used.
+    var email = error.email;
+    // The firebase.auth.AuthCredential type that was used.
+    var credential = error.credential;
+    console.log(errorCode, errorMessage, email, credential);
+    if (errorCode === 'auth/account-exists-with-different-credential') {
+      alert('You have signed up with a different provider for that email.');
+      // Handle linking here if your app allows it.
+    } else {
+      console.error(error);
     }
-  }
-});
-
+  });
+}
+// Logga ut den autentiserade användaren
+function logOut() {
+  firebase.auth().signOut()
+    .then(function(result) {
+      // Utloggning lyckades
+      console.log("Utloggad");
+      localStorage.removeItem('username');
+      location.reload();
+    })
+    .catch(function(error) {
+      // Utloggning misslyckades
+      console.log("Utloggningen misslyckades");
+    });
+}
 
 /* Functions */
+
+function sendMessage(message) {
+  // Make some checks for the message before creating it.
+  if (message.length < 3) {
+    console.log('Meddelandet är för kort.');
+  } else if (message.length > 2048) {
+    console.log('Meddelandet är för långt.');
+  } else if (message == undefined) {
+    console.log('Inget meddelandet har specificerats.');
+  } else {
+
+    // Skapa meddelande
+    new Message(message);
+    // Rensa inputfältet.
+    $('#msgArea').val('');
+  }
+}
 
 // Rösta +1
 function upvote(id, votes) {
@@ -192,9 +248,9 @@ function downvote(id, votes) {
 }
 
 
+/*
 function toggleModal() {
   $('#modal').fadeToggle("fast", "linear");
-}
 
 function addModalListeners() {
   $('#saveBtn').on('click', function(event) {
@@ -209,35 +265,30 @@ function addModalListeners() {
 
   });
 }
+*/
 
-
-function setUsername(name) {
+function setInfo(name, photoURL) {
   localStorage.setItem('username', name);
+  console.log(photoURL); // Rätt
+  $('#userImage').attr("src", photoURL);
+  document.getElementById('userImage').setAttribute('src', photoURL);
+  console.log($('#userImage').attr('src')); // uNKNOWN
 }
 
-function logoutUser() {
-  localStorage.removeItem('username');
-  location.reload();
-}
+
 
 function setupLogin() {
   $('#logStatus').text("Du är INTE inloggad!");
   $('#loginBtn').text('Logga In');
-  console.log("Logged in");
-
   $('#loginBtn').on('click', function() {
-    toggleModal();
+    logIn();
   });
 }
 
 function setupLogout() {
   $('#logStatus').text(`Välkommen ${localStorage.getItem('username')} <3`);
   $('#loginBtn').text('Logga Ut');
-  console.log("Logged out");
-
   $('#loginBtn').on('click', function() {
-    logoutUser();
-
-    $('#loginBtn').text('Logga In');
+    logOut();
   });
 }
