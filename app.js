@@ -136,6 +136,7 @@ db.ref('posts/').on('value', function(snapshot) {
   for (let object in data) {
     // console.log('Object: ', object);
     let msgObj = data[object];
+    console.log(msgObj);
     const messageDiv = $("<div></div>").html(`
       <div class="rating"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
       <div><h2>${msgObj.name}</h2>
