@@ -131,22 +131,31 @@ class Message {
 /* let myMessage = new Message(message)*/
 
 /* Display Messages */
+//Skapa en array tom array utanför loopen.
+
+let displayedMessages = [];
 db.ref('posts/').on('value', function(snapshot) {
   let data = snapshot.val();
+
   for (let object in data) {
+
     // console.log('Object: ', object);
     let msgObj = data[object];
-    console.log(msgObj);
     const messageDiv = $("<div></div>").html(`
       <div class="rating"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
       <div><h2>${msgObj.name}</h2>
       <p class="time">${msgObj.time}</p></div>
       <p>${msgObj.message}</p>`);
-
     if (localStorage.getItem('username') != null){
-      $('main').append(messageDiv);
+      if(!displayedMessages.includes(msgObj.id)){ // Om listan inte innehåller id:et. Posta det!
+        $('main').prepend(messageDiv);
+
+        // Lägg till id:et i listan för meddelanden som redan visas!
+        displayedMessages.push(msgObj.id);
+      }
     }
   }
+    console.log(displayedMessages);
 });
 
 
