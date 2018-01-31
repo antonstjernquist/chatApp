@@ -39,7 +39,7 @@ Storage.prototype.getObject = function(key) {
 };
 // https://oscarotero.com/jquery/  Jquery cheatsheet
 $(window).on('load', function() {
- //  localStorage.removeItem('username'); // REMOVES ITEM DEVELOP ONLY
+  //  localStorage.removeItem('username'); // REMOVES ITEM DEVELOP ONLY
   if (localStorage.getItem('username') != null) {
     console.log('User is logged in and the username is: ' + localStorage.getItem('username'));
     setupLogout();
@@ -50,15 +50,23 @@ $(window).on('load', function() {
     addModalListeners();
   }
   // Rate eventListeners
-  $(document).on('click', '.upvote', function (event) {
-    // "THISMESSAGE OBJECT".upvote();
+  $(document).on('click', '.upvote', function(event) {
+    // "THISMESSAGE OBJECT".upvote();""
+    const id = $(this).parent().attr('id');
+    const votes = $(this).next().text();
+    upvote(id, votes);
+    // upvote(id, );
+
   });
-  $(document).on('click', '.downvote', function (event) {
+  $(document).on('click', '.downvote', function(event) {
     // "THISMESSAGE".downvote();
+    const id = $(this).parent().attr('id');
+    const votes = $(this).prev().text();
+    downvote(id, votes);
   });
-  if (localStorage.getItem('username') === null){
-      $('#formBtn').prop("disabled",true);
-      $('#formBtn').text('Log in to send message');
+  if (localStorage.getItem('username') === null) {
+    $('#formBtn').prop("disabled", true);
+    $('#formBtn').text('Log in to send message');
   }
 
 
@@ -72,14 +80,14 @@ $(window).on('load', function() {
   }
 
   //EventListener for sending message.
-  $(document).on('click', '#formBtn', function (event){
+  $(document).on('click', '#formBtn', function(event) {
     let message = $('#msgArea').val();
     // Make some checks for the message before creating it.
-    if(message.length < 3){
+    if (message.length < 3) {
       console.log('Meddelandet är för kort.');
-    } else if (message.length > 2048){
+    } else if (message.length > 2048) {
       console.log('Meddelandet är för långt.');
-    } else if (message == undefined){
+    } else if (message == undefined) {
       console.log('Inget meddelandet har specificerats.');
     } else {
       new Message(message);
@@ -107,25 +115,6 @@ class Message {
   removeMessage() {
     db.ref(`posts/${this.id}`).remove();
   }
-  // Rösta +1
-  upvote() {
-    if (this.ratedUsers.includes(localStorage.getItem('username'))) {
-      console.log("You can't rate again");
-      return;
-    } else if (this.rated === false) {
-      this.rating++;
-      this.ratedUsers.push(localStorage.getItem('username'));
-    }
-  }
-  // Rösta -1
-  downvote() {
-    if (this.ratedUsers.includes(localStorage.getItem('username'))) {
-      console.log("You can't rate again");
-    } else {
-      this.rating--;
-      this.ratedUsers.push(localStorage.getItem('username'));
-    }
-  }
 }
 
 /* let myMessage = new Message(message)*/
@@ -138,27 +127,70 @@ db.ref('posts/').on('value', function(snapshot) {
   let data = snapshot.val();
 
   for (let object in data) {
-
     // console.log('Object: ', object);
     let msgObj = data[object];
+
+
     const messageDiv = $("<div></div>").html(`
-      <div class="rating"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
+      <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
       <div><h2>${msgObj.name}</h2>
       <p class="time">${msgObj.time}</p></div>
       <p>${msgObj.message}</p>`);
-    if (localStorage.getItem('username') != null){
-      if(!displayedMessages.includes(msgObj.id)){ // Om listan inte innehåller id:et. Posta det!
+
+    if (localStorage.getItem('username') != null) {
+      if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
         $('main').prepend(messageDiv);
         // Lägg till id:et i listan för meddelanden som redan visas!
         displayedMessages.push(msgObj.id);
       }
     }
   }
-    console.log(displayedMessages);
 });
 
 
 /* Functions */
+
+// Rösta +1
+function upvote(id, votes) {
+  db.ref('ratings/' + id).once('value', function(snapshot) {
+    let data = snapshot.val();
+    let username = localStorage.getItem('username');
+    let voted = false;
+    db.ref('ratings/' + id).push(username);
+
+    if (data != null) { // Det finns något
+      for (let obj in data) { // Gå igenom användarna som röstat på posten
+        if (data[obj] === username) { // Om användarnamnet hittas. Sätt röstat till sant
+          voted = true;
+        }
+
+        console.log(obj); // idet
+        console.log(msgObj); // namnet
+      }
+
+      if (voted) {
+        console.log("Du kan inte rösta på detta meddelande igen!");
+      } else {
+        db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
+        db.ref('ratings/' + id).push(username);
+      }
+    }
+  });
+}
+
+
+
+// Rösta -1
+function downvote(id, votes) {
+
+  if (ratedUsers.includes(localStorage.getItem('username'))) {
+    console.log("You can't rate again");
+  } else {
+    db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
+    ratedUsers.push(localStorage.getItem('username'));
+  }
+}
+
 
 function toggleModal() {
   $('#modal').fadeToggle("fast", "linear");
@@ -171,9 +203,9 @@ function addModalListeners() {
     setUsername(name);
     toggleModal();
     console.log("Username has been set to: " + name);
-    setTimeout(function(){
+    setTimeout(function() {
       location.reload();
-    },100)
+    }, 100)
 
   });
 }
