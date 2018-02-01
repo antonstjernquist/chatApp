@@ -1,135 +1,166 @@
 #modalContent {
-    background-color: #fefefe;
-    margin: 16% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    border-radius: 7px;
-    display: inline-block;
-    position: relative;
+  background-color: #fefefe;
+  margin: 16% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 7px;
+  display: inline-block;
+  position: relative;
 }
+
 #modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-    text-align: center;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+  text-align: center;
 }
 
-  body {
-    font-family: sans-serif;
-  }
-  button {
-    padding: 5px 15px;
-    background-color: #222;
-    color: #fff;
-    vertical-align: 3px;
-    border-radius: 4px;
-    cursor: pointer;
-    outline: none;
-    border: none;
-  }
-  button:hover {
-    background-color: #333;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 30px;
-  }
+body {
+  font-family: sans-serif;
+}
 
-  #messageBox button {
-    margin: 10px;
-  }
-  #messageBox {
-    width: 50%;
-    margin: 5px auto;
-    padding: 10px 25px 10px 0px;
-    text-align: center;
-  }
-  .rating {
-    display: inline-block;
-    position: relative;
-    left: -60px;
-    font-size: 1.2em;
-    top: 48px;
-    font-family: arial;
-  }
+button {
+  padding: 5px 15px;
+  background-color: #222;
+  color: #fff;
+  vertical-align: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
 
-  .vote {
-    position: absolute;
-    display: inline-block;
-    font-size: 1.2em;
-    color: rgb(99, 99, 99);
-  }
-  .upvote {
-    left: -5px;
-    bottom: -1px;
-    cursor: pointer;
-    color: #b4b4b4;
-  }
-  .upvote:hover {
-    color: rgb(96, 198, 94);
-  }
-  .downvote{
-    transform: rotate(180deg);
-    left: -5px;
-    bottom: -52px;
-    cursor: pointer;
-    color: #b4b4b4;
-  }
-  .downvote:hover {
-    color: rgb(249, 81, 65);
-  }
+button:hover {
+  background-color: #333;
+}
 
-  textarea {
-    background-color: #fff;
-    margin: 0;
-    color: #222;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    min-height: 100px;
-    border: 1px solid rgba(219, 219, 218, 0.77);
-    resize: none;
-  }
-  textarea:focus {
-    box-shadow: 0 0 2px 4px rgb(65, 160, 249);
-    border: 1px solid transparent;
-  }
-  #loginBtn {
-    display: block;
-    width: 100%;
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 30px;
+}
 
-  }
-  /* Message layout */
+#messageBox button {
+  margin: 10px;
+}
 
-  main > div {
-    background-color: #363636;
-    color: #dddddd;
-    padding: 10px 25px;
-    margin: 10px auto;
-    border-radius: 4px;
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    position: relative;
-    box-shadow: 0px 5px 5px 2px #3b3b3b;
-  }
-  .time {
-    color: #7a7a7a;
-  }
-  main > div > div {
-    display: flex;
-    justify-content: space-between;
-  }
+#messageBox {
+  width: 50%;
+  margin: 5px auto;
+  padding: 10px 25px 10px 0px;
+  text-align: center;
+}
 
-  main > div > p:not(.time) {
-    font-family: serif;
-  }
+.rating {
+  display: inline-block;
+  position: relative;
+  left: -60px;
+  font-size: 1.2em;
+  top: 48px;
+  font-family: arial;
+}
+
+.vote {
+  position: absolute;
+  display: inline-block;
+  font-size: 1.2em;
+  color: rgb(99, 99, 99);
+}
+
+.upvote {
+  left: -5px;
+  bottom: -1px;
+  cursor: pointer;
+  color: #b4b4b4;
+}
+
+.upvote:hover {
+  color: rgb(96, 198, 94);
+}
+
+.downvote {
+  transform: rotate(180deg);
+  left: -5px;
+  bottom: -52px;
+  cursor: pointer;
+  color: #b4b4b4;
+}
+
+.downvote:hover {
+  color: rgb(249, 81, 65);
+}
+
+.cross {
+  float: right;
+  margin-bottom: 17px;
+  font-size: 1.4em;
+}
+.cross:hover{
+  color: rgb(249, 81, 65);
+  cursor: pointer;
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px 20px;
+}
+
+textarea {
+  background-color: #fff;
+  margin: 0;
+  color: #222;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  min-height: 100px;
+  border: 1px solid rgba(219, 219, 218, 0.77);
+  resize: none;
+}
+
+textarea:focus {
+  box-shadow: 0 0 2px 4px rgb(65, 160, 249);
+  border: 1px solid transparent;
+}
+
+#loginBtn {
+  display: block;
+  width: 100%;
+}
+
+/* Message layout */
+
+main>div {
+  background-color: #363636;
+  color: #dddddd;
+  padding: 10px 25px;
+  margin: 10px auto;
+  border-radius: 4px;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0px 5px 5px 2px #3b3b3b;
+}
+
+.time {
+  color: #7a7a7a;
+}
+
+main>div>div {
+  display: flex;
+  justify-content: space-between;
+}
+
+main>div>p:not(.time) {
+  font-family: serif;
+}

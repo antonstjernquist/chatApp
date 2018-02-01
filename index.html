@@ -14,7 +14,7 @@
     <h1> Zick Chat App</h1>
     <div>
       <img id="userImage" alt="User Image" src="tempSource">
-    <h3 id="logStatus">Du är inte inloggad!</h3><button id="loginBtn"></button>
+    <h3 id="logStatus">You are not logged in.</h3><button id="loginBtn">User panel</button>
     </div>
   </header>
 
@@ -29,9 +29,14 @@
 
   <div id="modal">
     <div id="modalContent">
-      <h2>Ange ditt namn: </h2>
-      <input type="text" id="namnInput">
-      <button id="saveBtn">Spara</button>
+      <span class="cross">&#10008;</span>
+      <button id="githubLogin">Sign in with github</button>
+      <button id="googleLogin">Sign in with google</button>
+        <input id="txtEmail" type="email" placeholder="Email" />
+        <input id="txtPassword" type="password" placeholder="Password" />
+        <button id="btnLogin" class="btn btn-action">Log in</button>
+        <button id="btnSignup" class="btn btn-secondary">Sign up</button>
+        <button id="btnLogout" class="btn btn-action">Log out</button>
     </div>
   </div>
 

@@ -1,4 +1,5 @@
 // Initialize Firebase
+
 var config = {
   apiKey: "AIzaSyAnijz-PUAHdNfVeE5wdbDQyRmta3s1LjQ",
   authDomain: "chatapp-5d41e.firebaseapp.com",
@@ -7,6 +8,11 @@ var config = {
   storageBucket: "",
   messagingSenderId: "870983683438"
 };
+firebase.initializeApp(config);
+const db = firebase.database();
+console.log("Firebase initlialized");
+
+
 /*
 -där besökaren kan skriva in sitt namn och bli ihågkommen --CHECK
 -webbsidan kan glömma bort namnet, "logga ut"
@@ -22,12 +28,8 @@ var config = {
 -som är redovisad före deadline.
 */
 
-// Firebase intitliazination
-firebase.initializeApp(config);
-const db = firebase.database();
 
 
-console.log("Firebase initlialized");
 
 // LocalStorage
 Storage.prototype.setObject = function(key, value) {
@@ -39,13 +41,16 @@ Storage.prototype.getObject = function(key) {
 };
 // https://oscarotero.com/jquery/  Jquery cheatsheet
 $(window).on('load', function() {
+  console.log("Window loaded");
   //  localStorage.removeItem('username'); // REMOVES ITEM DEVELOP ONLY
-  if (localStorage.getItem('username') != null) {
-    console.log('User is logged in and the username is: ' + localStorage.getItem('username'));
-    setupLogout();
-  } else {
-    setupLogin();
-  }
+  /*
+    if (localStorage.getItem('username') != null) {
+      console.log('User is logged in and the username is: ' + localStorage.getItem('username'));
+      setupLogout();
+    } else {
+      setupLogin();
+    }
+    */
   // Rate eventListeners
   $(document).on('click', '.upvote', function(event) {
     // "THISMESSAGE OBJECT".upvote();""
@@ -61,21 +66,18 @@ $(window).on('load', function() {
     const votes = $(this).prev().text();
     downvote(id, votes);
   });
-  if (localStorage.getItem('username') === null) {
-    $('#formBtn').prop("disabled", true);
-    $('#formBtn').text('Log in to send message');
-  }
 
-/*
-  // Click outside
-  if ($('#modal').is(":visible")) {
-    $('#modal').click(function(event) {
-      if (!$(event.target).closest('#modalContent').length) {
-        toggleModal();
+
+  /*
+      // Click outside
+      if ($('#modal').is(":visible")) {
+        $('#modal').click(function(event) {
+          if (!$(event.target).closest('#modalContent').length) {
+            toggleModal();
+          }
+        });
       }
-    });
-  }
-*/
+  */
   //EventListener for sending message.
   $(document).on('click', '#formBtn', function(event) {
     let message = $('#msgArea').val();
@@ -83,8 +85,8 @@ $(window).on('load', function() {
   });
 
   //EventListener for center
-  $('#msgArea').keyup(function(event){
-    if(event.keyCode === 13 && !event.shiftKey){
+  $('#msgArea').keyup(function(event) {
+    if (event.keyCode === 13 && !event.shiftKey) {
       let message = $('#msgArea').val();
       sendMessage(message);
     }
@@ -105,7 +107,7 @@ $(window).on('load', function() {
         <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
         <div><h2>${msgObj.name}</h2>
         <p class="time">${msgObj.time}</p></div>`);
-        messageDiv.append(messageParagraf);
+      messageDiv.append(messageParagraf);
 
 
       if (localStorage.getItem('username') != null) {
@@ -117,8 +119,99 @@ $(window).on('load', function() {
       }
     }
   });
+  $('.cross').click(function(event) {
+    toggleModal();
+  });
+  /*
+    $('#githubLogin').click(function(event) {
+      logIn("github");
+    });
+    $('#googleLogin').click(function(event) {
+      logIn("google");
+    });
+      */
+  $('#loginBtn').on('click', function() {
+    toggleModal();
+  });
+  // EMAIL AND PASSWORD LOGIN/LOGOUT
+  // Form input
+  const txtEmail = ($('#txtEmail'));
+  const txtPassword = ($('#txtPassword'));
+  // Events for login and logout
+  $('#btnLogin').click(function(event) {
+    const email = txtEmail.val()
+    const pass = txtPassword.val()
+    const auth = firebase.auth();
+    // Sign in
+    const provider = auth.signInWithEmailAndPassword(email, pass);
+    provider.then(data => {
+      console.log("You are logged in as " + data.email)
+      localStorage.setItem('username', data.email);
+    }).catch(event => console.log(event.message));
+  });
+
+  $('#btnSignup').click(function(event) {
+    const email = txtEmail.val() // check for real email
+    const pass = txtPassword.val()
+    const auth = firebase.auth();
+    // Create user
+    const provider = auth.createUserWithEmailAndPassword(email, pass);
+    provider.then(data => {
+      console.log("Account created data = ", data);
+      localStorage.setItem('username', data.email);
+    }).catch(event => console.log(event.message));
+  });
+  $('#btnLogout').hide()
+  $('#btnLogout').click(function(event) {
+    logOut();
+  });
+  // GITHUB LOGIN
+  $('#githubLogin').click(function(event) {
+    var provider = new firebase.auth.GithubAuthProvider();
+    provider.addScope('repo');
+    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().getRedirectResult().then(function(result) {
+      if (result.credential) {
+        var token = result.credential.accessToken;
+
+      }
+      var user = result.user;
+      setInfo(user.displayName, user.photoURL);
+    }).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      if (errorCode === 'auth/account-exists-with-different-credential') {
+        alert('You have signed up with a different provider for that email.');
+        // Handle linking here if your app allows it.
+      } else {
+        console.error(error);
+      }
+    });
 
 
+  })
+
+
+  // Realtime user auth listener
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      console.log(user);
+      $('#btnLogout').show();
+      $('#btnLogin').hide();
+      $('#btnSignup').hide();
+      $('#logStatus').text(`Whalecum ${localStorage.getItem('username')} <3`);
+    } else {
+      console.log("Not logged in. User =  " + user);
+      $('#formBtn').prop("disabled", true);
+      $('#msgArea').prop("disabled", true);
+      $('#formBtn').text('Log in to send message');
+    }
+  })
 }); // End of callback
 
 // Classes
@@ -142,11 +235,26 @@ class Message {
   }
 }
 
-// Firebase AUTH
-function logIn() {
-  var provider = new firebase.auth.GithubAuthProvider();
-  provider.addScope('repo');
 
+
+
+/*  switch (logInProvider) {
+    case "github":
+      var provider = new firebase.auth.GithubAuthProvider();
+      provider.addScope('repo');
+      break;
+    case "google":
+      var provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('profile');
+      provider.addScope('email');
+      break;
+    case "email":
+
+      break;
+*/
+
+// Using a popup.
+/*
   firebase.auth().signInWithPopup(provider).then(function(result) {
     // This gives you a GitHub Access Token.
     var token = result.credential.accessToken;
@@ -154,7 +262,7 @@ function logIn() {
     var user = result.user;
     setInfo(user.displayName, user.photoURL);
     console.log(user.photoURL); // https://avatars2.githubusercontent.com/u/8511394?v=4
-    location.reload();
+    location.reload(); //<-- Vad är detta :PPP efter man loggat in så reloadar det sidan.
   }).catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;
@@ -163,7 +271,6 @@ function logIn() {
     var email = error.email;
     // The firebase.auth.AuthCredential type that was used.
     var credential = error.credential;
-    console.log(errorCode, errorMessage, email, credential);
     if (errorCode === 'auth/account-exists-with-different-credential') {
       alert('You have signed up with a different provider for that email.');
       // Handle linking here if your app allows it.
@@ -172,6 +279,11 @@ function logIn() {
     }
   });
 }
+*/
+// Switch statement depending on which login provider the user chooses
+
+
+
 // Logga ut den autentiserade användaren
 function logOut() {
   firebase.auth().signOut()
@@ -248,10 +360,11 @@ function downvote(id, votes) {
 }
 
 
-/*
+
 function toggleModal() {
   $('#modal').fadeToggle("fast", "linear");
-
+}
+/*
 function addModalListeners() {
   $('#saveBtn').on('click', function(event) {
     let name = $('#namnInput').val();
@@ -269,20 +382,16 @@ function addModalListeners() {
 
 function setInfo(name, photoURL) {
   localStorage.setItem('username', name);
-  console.log(photoURL); // Rätt
   $('#userImage').attr("src", photoURL);
-  document.getElementById('userImage').setAttribute('src', photoURL);
-  console.log($('#userImage').attr('src')); // uNKNOWN
 }
 
+function updateUserStatus() {
 
-
+}
+/*
 function setupLogin() {
   $('#logStatus').text("Du är INTE inloggad!");
   $('#loginBtn').text('Logga In');
-  $('#loginBtn').on('click', function() {
-    logIn();
-  });
 }
 
 function setupLogout() {
@@ -292,3 +401,4 @@ function setupLogout() {
     logOut();
   });
 }
+*/
