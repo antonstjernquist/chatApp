@@ -96,32 +96,45 @@ $(window).on('load', function() {
   let displayedMessages = [];
   db.ref('posts/').on('value', function(snapshot) {
     let data = snapshot.val();
-    let firstCheck = true;
 
     // Get the latest post
+    let latestPoster;
 
-    for (let object in data) {
+    for (let object in data) { // Denna loop körs för varje meddelande.
       // console.log('Object: ', object);
       let msgObj = data[object];
       let messageParagraf = document.createElement('p');
 
-
+      let topDivPoster = $('main > div:first > div:nth-child(2) > h2').text();
 
       //Last Poster
-      let lastPoster = $('main > div:first > div:nth-child(2) > h2').text();
+      if(latestPoster == null){
+        if(topDivPoster != null){
+          latestPoster = topDivPoster;
+        } else {
+          latestPoster = msgObj.name;
+        }
+      }
 
 
       let messageDiv;
       let createMessage = true;
 
-      if(lastPoster == msgObj.name){
-        messageParagraf.innerText = msgObj.message;
-        messageParagraf.style.margin = '0px';
-        messageParagraf.style.padding = '0px';
-          $("main > div:first").append(messageParagraf);
-          $("main > div:first > p:first").css('margin', '0');
-          //messageDiv.prepend(messageParagraf);
-          createMessage = false;
+      console.log('topDivPoster', topDivPoster);
+      console.log('latestPoster', latestPoster);
+
+      if(latestPoster == msgObj.name){ // Lägg till meddelandet bara.
+        if(!displayedMessages.includes(msgObj.id)){ // Kolla om meddelandet redan visas.
+          messageParagraf.innerText = msgObj.message;
+          messageParagraf.style.margin = '0px';
+          messageParagraf.style.padding = '0px';
+            $("main > div:first").append(messageParagraf);
+            $("main > div:first > p:first").css('margin', '0');
+            createMessage = false;
+            console.log('JUST ADDING A MESSAGE.');
+            // Lägg till meddelandets ID i visande meddelanden.
+            displayedMessages.push(msgObj.id);
+        }
       } else {
         messageParagraf.innerText = msgObj.message;
         messageDiv = $("<div></div>").html(`
@@ -137,6 +150,8 @@ $(window).on('load', function() {
           $('main').prepend(messageDiv);
           // Lägg till id:et i listan för meddelanden som redan visas!
           displayedMessages.push(msgObj.id);
+          latestPoster = null;
+          console.log('Creating a message!');
         }
       }
     }
