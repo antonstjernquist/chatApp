@@ -2,25 +2,27 @@
 <html>
 
 <head>
-    <title>Zick Chat App </title>
-    <meta charset="utf-8">
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
-    <script src="app.js"></script>
-    <link href="main.css" rel="stylesheet" type="text/css">
+  <title>Zick Chat App </title>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+  <script src="app.js"></script>
+  <link href="main.css" rel="stylesheet" type="text/css">
 </head>
+
 <body>
   <header>
-    <h1> Zick Chat App</h1>
-    <div>
-      <img id="userImage" alt="User Image" src="tempSource">
-    <h3 id="logStatus">You are not logged in.</h3><button id="loginBtn">User panel</button>
+    <h1 style="position:absolute;"> Zick Chat App</h1>
+    <div class="userMenu">
+      <img id="userImage" alt="User Image" src="noimg.png">
+        <h4 id="logStatus">You are not logged in.</h4>
+      <button id="loginBtn">User panel</button>
     </div>
   </header>
 
   <div id="messageBox">
-      <textarea id="msgArea" placeholder="Skriv ett meddelande..."></textarea>
-      <button id="formBtn">Skicka</button>
+    <textarea id="msgArea" placeholder="Skriv ett meddelande..."></textarea>
+    <button id="formBtn">Skicka</button>
   </div>
 
   <main>
@@ -30,13 +32,25 @@
   <div id="modal">
     <div id="modalContent">
       <span class="cross">&#10008;</span>
-      <button id="githubLogin">Sign in with github</button>
-      <button id="googleLogin">Sign in with google</button>
-        <input id="txtEmail" type="email" placeholder="Email" />
-        <input id="txtPassword" type="password" placeholder="Password" />
-        <button id="btnLogin" class="btn btn-action">Log in</button>
-        <button id="btnSignup" class="btn btn-secondary">Sign up</button>
-        <button id="btnLogout" class="btn btn-action">Log out</button>
+      <button class="btn btn-action" id="githubLogin">Sign in with github</button>
+      <button class="btn btn-action" id="googleLogin">Sign in with google</button>
+      <p style="font-size: 1.8em; color: rgba(54, 54, 54, 0.9);">or</p>
+      <div class="group">
+        <input id="txtEmail" type="email" required>
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label>Email</label>
+      </div>
+      <div class="group">
+        <input id="txtPassword" type="password" required>
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label>Password</label>
+      </div>
+      <button id="btnLogin" class="btn btn-action">Log in</button>
+      <button id="btnSignup" class="btn btn-secondary">Sign up</button>
+      <button id="btnLogout" class="btn btn-action">Log out</button>
+
     </div>
   </div>
 

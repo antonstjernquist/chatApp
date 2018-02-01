@@ -151,7 +151,7 @@ $(window).on('load', function() {
   });
 
   $('#btnSignup').click(function(event) {
-    const email = txtEmail.val() // check for real email
+    const email = txtEmail.val() // todo check for real email
     const pass = txtPassword.val()
     const auth = firebase.auth();
     // Create user
@@ -159,43 +159,62 @@ $(window).on('load', function() {
     provider.then(data => {
       console.log("Account created data = ", data);
       localStorage.setItem('username', data.email);
-    }).catch(event => console.log(event.message));
+    }).catch(e => console.log(e.message));
   });
   $('#btnLogout').hide()
   $('#btnLogout').click(function(event) {
     logOut();
   });
-  // GITHUB LOGIN
+
   $('#githubLogin').click(function(event) {
-    var provider = new firebase.auth.GithubAuthProvider();
-    provider.addScope('repo');
-    firebase.auth().signInWithRedirect(provider);
-    firebase.auth().getRedirectResult().then(function(result) {
-      if (result.credential) {
-        var token = result.credential.accessToken;
-
-      }
-      var user = result.user;
-      setInfo(user.displayName, user.photoURL);
-    }).catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      if (errorCode === 'auth/account-exists-with-different-credential') {
-        alert('You have signed up with a different provider for that email.');
-        // Handle linking here if your app allows it.
-      } else {
-        console.error(error);
-      }
+    let provider = new firebase.auth.GithubAuthProvider();
+    provider.setCustomParameters({ // optional
+      'allow_signup': 'true'
     });
+    firebase.auth().getRedirectResult().then(function(result) {
+        // Om vi har gjort en redirect tidigare,
+        // så är result.user !== null
+        if (result.user) {
+          console.log('Redirect result, success: we have a user.');
+          console.log('You are logged in as ' + firebase.auth().currentUser.displayName);
+        } else {
+          console.log('Redirect result, user is null.');
+        }
+      })
+      .catch(function(error) {
+        // Inträffar om vi inte kan få information om en
+        // eventuell tidigare redirect
+        console.log('Redirect result, error: ' + error.message);
+      })
+    firebase.auth().signInWithRedirect(provider);
+  });
 
+// GOOGLE LOGIN
+  $('#googleLogin').click(function(event) {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+    provider.setCustomParameters({ // optional
+      'allow_signup': 'true'
+    });
+    firebase.auth().getRedirectResult().then(function(result) {
+        if (result.user) {
+          console.log('Redirect result, success: we have a user.');
+          console.log('You are logged in as ' + firebase.auth().currentUser.displayName);
+        } else {
+          console.log('Redirect result, user is null.');
+        }
+      })
+      .catch(function(error) {
+        // Inträffar om vi inte kan få information om en
+        // eventuell tidigare redirect
+        console.log('Redirect result, error: ' + error.message);
+      })
 
+    // Start a sign in process for an unauthenticated user.
+
+    firebase.auth().signInWithRedirect(provider);
   })
-
 
   // Realtime user auth listener
   firebase.auth().onAuthStateChanged(user => {
@@ -204,14 +223,23 @@ $(window).on('load', function() {
       $('#btnLogout').show();
       $('#btnLogin').hide();
       $('#btnSignup').hide();
-      $('#logStatus').text(`Whalecum ${localStorage.getItem('username')} <3`);
+      if (user.displayName != null) {
+        setInfo(user.displayName, user.photoURL, user.email);
+        $('#logStatus').text(`Whalecum ${user.displayName} <3`);
+      }else {
+        setInfo(user.email);
+        $('#logStatus').text(`Whalecum ${user.email} <3`);
+      }
+
     } else {
-      console.log("Not logged in. User =  " + user);
+      console.log("Not logged in");
       $('#formBtn').prop("disabled", true);
       $('#msgArea').prop("disabled", true);
       $('#formBtn').text('Log in to send message');
     }
   })
+
+
 }); // End of callback
 
 // Classes
