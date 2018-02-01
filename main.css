@@ -409,3 +409,19 @@ main>div>p:not(.time) {
 .btn-secondary:hover{
   background-color: #6a6a6a;
 }
+
+/* Some Zick previous poster CSS */
+
+
+element {
+
+}
+p.previousPoster {
+  color: #999;
+}
+div.previousPoster {
+  background-color: #444;
+  margin: 0px auto;
+  border-radius: 0;
+  padding: 0px 25px;
+}

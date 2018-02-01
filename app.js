@@ -96,21 +96,43 @@ $(window).on('load', function() {
   let displayedMessages = [];
   db.ref('posts/').on('value', function(snapshot) {
     let data = snapshot.val();
+    let firstCheck = true;
+
+    // Get the latest post
 
     for (let object in data) {
       // console.log('Object: ', object);
       let msgObj = data[object];
       let messageParagraf = document.createElement('p');
 
-      messageParagraf.innerText = msgObj.message;
-      const messageDiv = $("<div></div>").html(`
-        <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
-        <div><h2>${msgObj.name}</h2>
-        <p class="time">${msgObj.time}</p></div>`);
-      messageDiv.append(messageParagraf);
 
 
-      if (localStorage.getItem('username') != null) {
+      //Last Poster
+      let lastPoster = $('main > div:first > div:nth-child(2) > h2').text();
+
+
+      let messageDiv;
+      let createMessage = true;
+
+      if(lastPoster == msgObj.name){
+        messageParagraf.innerText = msgObj.message;
+        messageParagraf.style.margin = '0px';
+        messageParagraf.style.padding = '0px';
+          $("main > div:first").append(messageParagraf);
+          $("main > div:first > p:first").css('margin', '0');
+          //messageDiv.prepend(messageParagraf);
+          createMessage = false;
+      } else {
+        messageParagraf.innerText = msgObj.message;
+        messageDiv = $("<div></div>").html(`
+          <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
+          <div><h2>${msgObj.name}</h2>
+          <p class="time">${msgObj.time}</p></div>`);
+          messageDiv.append(messageParagraf);
+      }
+
+
+      if (localStorage.getItem('username') != null && createMessage) {
         if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
           $('main').prepend(messageDiv);
           // Lägg till id:et i listan för meddelanden som redan visas!
@@ -329,6 +351,16 @@ function logOut() {
 
 /* Functions */
 
+//Scroll Function
+(function($) {
+    $.fn.goTo = function() {
+        $('html, body').animate({
+            scrollTop: ($(this).offset().top - 15) + 'px'
+        }, 'fast');
+        return this; // for chaining...
+    }
+})(jQuery);
+
 function sendMessage(message) {
   // Make some checks for the message before creating it.
   if (message.length < 3) {
@@ -343,6 +375,8 @@ function sendMessage(message) {
     new Message(message);
     // Rensa inputfältet.
     $('#msgArea').val('');
+    // Scrolla lite
+    $('#msgArea').goTo();
   }
 }
 
