@@ -138,9 +138,18 @@ $(window).on('load', function() {
       } else {
         messageParagraf.innerText = msgObj.message;
         messageDiv = $("<div></div>").html(`
-          <div class="rating" id="${msgObj.id}"><span class="upvote vote">&#x25b2</span><span class="vote">${msgObj.rating}</span><span class="downvote vote">&#x25b2</span></div>
-          <div><h2>${msgObj.name}</h2>
-          <p class="time">${msgObj.time}</p></div>`);
+          <div class="rating" id="${msgObj.id}">
+            <span class="upvote vote">&#x25b2</span>
+            <span class="vote">${msgObj.rating}</span>
+            <span class="downvote vote">&#x25b2</span>
+          </div>
+          <div>
+            <div class="profilePicture">
+              <img src="noimg.png" alt="Profilbild" class="messagePicture">
+              <h2>${msgObj.name}</h2>
+            </div>
+            <p class="time">${msgObj.time}</p>
+          </div>`);
           messageDiv.append(messageParagraf);
       }
 

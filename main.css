@@ -410,14 +410,22 @@ main>div>p:not(.time) {
   background-color: #6a6a6a;
 }
 
+/* Some profile pic css */
+div.profilePicture {
+  display: flex;
+}
+
+div.profilePicture > img {
+  width: 25%;
+  box-shadow: 1px 1px 5px #222;
+  margin: 10px 15px 0px -4px;
+}
+
 /* Some Zick previous poster CSS */
 
 
 element {
 
-}
-p.previousPoster {
-  color: #999;
 }
 div.previousPoster {
   background-color: #444;
