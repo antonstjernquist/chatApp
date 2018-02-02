@@ -460,6 +460,7 @@ function addModalListeners() {
 function setInfo(name, photoURL) {
   localStorage.setItem('username', name);
   $('#userImage').attr("src", photoURL);
+  localStorage.setItem('profileUrl', photoURL);
 }
 
 function updateUserStatus() {
