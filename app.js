@@ -105,7 +105,7 @@ $(window).on('load', function() {
       let msgObj = data[object];
       let messageParagraf = document.createElement('p');
 
-      let topDivPoster = $('main > div:first > div:nth-child(2) > h2').text();
+      let topDivPoster = $('main > div:first > div h2').text();
 
       //Last Poster
       if(latestPoster == null){
