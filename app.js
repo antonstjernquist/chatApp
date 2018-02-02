@@ -108,8 +108,8 @@ $(window).on('load', function() {
       let topDivPoster = $('main > div:first > div h2').text();
 
       //Last Poster
-      if(latestPoster == null){
-        if(topDivPoster != null){
+      if (latestPoster == null) {
+        if (topDivPoster != null) {
           latestPoster = topDivPoster;
         } else {
           latestPoster = msgObj.name;
@@ -117,23 +117,35 @@ $(window).on('load', function() {
       }
 
 
+      //Update the rating
+      let domDiv = $("main > div > div:first-child");
+      let domID = domDiv.attr('id');
+      //console.log('The id is: ' + domID);
+/*
+      if(msgObj.id == domID){
+        domDiv:nth-child(2).text(msgObj.rating);
+      }
+*/
       let messageDiv;
       let createMessage = true;
 
-      console.log('topDivPoster', topDivPoster);
-      console.log('latestPoster', latestPoster);
-
-      if(latestPoster == msgObj.name){ // Lägg till meddelandet bara.
-        if(!displayedMessages.includes(msgObj.id)){ // Kolla om meddelandet redan visas.
+      if (latestPoster == msgObj.name) { // Lägg till meddelandet bara.
+        if (!displayedMessages.includes(msgObj.id)) { // Kolla om meddelandet redan visas.
           messageParagraf.innerText = msgObj.message;
           messageParagraf.style.margin = '0px';
           messageParagraf.style.padding = '0px';
-            $("main > div:first").append(messageParagraf);
-            $("main > div:first > p:first").css('margin', '0');
-            createMessage = false;
-            console.log('JUST ADDING A MESSAGE.');
-            // Lägg till meddelandets ID i visande meddelanden.
-            displayedMessages.push(msgObj.id);
+
+          let latestMessage = $("main > div:first");
+
+          $("main > div:first > div p.time").text(msgObj.time);
+
+          latestMessage.append(messageParagraf);
+
+
+          $("main > div:first > p:first").css('margin', '0');
+          createMessage = false;
+          // Lägg till meddelandets ID i visande meddelanden.
+          displayedMessages.push(msgObj.id);
         }
       } else {
         messageParagraf.innerText = msgObj.message;
@@ -145,14 +157,13 @@ $(window).on('load', function() {
           </div>
           <div>
             <div class="profilePicture">
-              <img src="noimg.png" alt="Profilbild" class="messagePicture">
+              <img src="${localStorage.getItem('profileUrl')}" alt="Profilbild" class="messagePicture">
               <h2>${msgObj.name}</h2>
             </div>
             <p class="time">${msgObj.time}</p>
           </div>`);
-          messageDiv.append(messageParagraf);
+        messageDiv.append(messageParagraf);
       }
-
 
       if (localStorage.getItem('username') != null && createMessage) {
         if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
@@ -160,7 +171,6 @@ $(window).on('load', function() {
           // Lägg till id:et i listan för meddelanden som redan visas!
           displayedMessages.push(msgObj.id);
           latestPoster = null;
-          console.log('Creating a message!');
         }
       }
     }
@@ -235,7 +245,7 @@ $(window).on('load', function() {
     firebase.auth().signInWithRedirect(provider);
   });
 
-// GOOGLE LOGIN
+  // GOOGLE LOGIN
   $('#googleLogin').click(function(event) {
     var provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('profile');
@@ -272,7 +282,7 @@ $(window).on('load', function() {
       if (user.displayName != null) {
         setInfo(user.displayName, user.photoURL, user.email);
         $('#logStatus').text(`Whalecum ${user.displayName} <3`);
-      }else {
+      } else {
         setInfo(user.email);
         $('#logStatus').text(`Whalecum ${user.email} <3`);
       }
@@ -377,12 +387,12 @@ function logOut() {
 
 //Scroll Function
 (function($) {
-    $.fn.goTo = function() {
-        $('html, body').animate({
-            scrollTop: ($(this).offset().top - 15) + 'px'
-        }, 'fast');
-        return this; // for chaining...
-    }
+  $.fn.goTo = function() {
+    $('html, body').animate({
+      scrollTop: ($(this).offset().top - 15) + 'px'
+    }, 'fast');
+    return this; // for chaining...
+  }
 })(jQuery);
 
 function sendMessage(message) {
@@ -405,33 +415,46 @@ function sendMessage(message) {
 }
 
 // Rösta +1
+
 function upvote(id, votes) {
+  console.log("Initializing upvote...");
   db.ref('ratings/' + id).once('value', function(snapshot) {
+
     let data = snapshot.val();
     let username = localStorage.getItem('username');
     let voted = false;
-    db.ref('ratings/' + id).push(username);
+
 
     if (data != null) { // Det finns något
       for (let obj in data) { // Gå igenom användarna som röstat på posten
-        if (data[obj] === username) { // Om användarnamnet hittas. Sätt röstat till sant
+        if (data[obj] == username) { // Om användarnamnet hittas. Sätt redan röstat till sant
           voted = true;
         }
-
-        console.log(obj); // idet
-        console.log(msgObj); // namnet
       }
 
       if (voted) {
         console.log("Du kan inte rösta på detta meddelande igen!");
       } else {
+        console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
         db.ref('ratings/' + id).push(username);
       }
+    } else {
+      console.log("Just voted...");
+      db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
+      db.ref('ratings/' + id).push(username);
     }
   });
 }
+/*
+function updateRating(id){
+  db.ref('posts/' + id).once('value', function(snapshot){
 
+  }){
+
+  }
+}
+*/
 
 
 // Rösta -1
@@ -470,11 +493,16 @@ function setInfo(name, photoURL) {
   localStorage.setItem('username', name);
   $('#userImage').attr("src", photoURL);
   localStorage.setItem('profileUrl', photoURL);
+
+  if (photoURL != null && photoURL != undefined) {
+    localStorage.setItem('profileUrl', photoURL);
+  } else {
+    localStorage.setItem('profileUrl', 'noimg.png');
+  }
+
 }
 
-function updateUserStatus() {
 
-}
 /*
 function setupLogin() {
   $('#logStatus').text("Du är INTE inloggad!");
