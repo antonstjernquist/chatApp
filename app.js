@@ -121,11 +121,11 @@ $(window).on('load', function() {
       let domDiv = $("main > div > div:first-child");
       let domID = domDiv.attr('id');
       //console.log('The id is: ' + domID);
-/*
-      if(msgObj.id == domID){
-        domDiv:nth-child(2).text(msgObj.rating);
-      }
-*/
+      /*
+            if(msgObj.id == domID){
+              domDiv:nth-child(2).text(msgObj.rating);
+            }
+      */
       let messageDiv;
       let createMessage = true;
 
@@ -152,18 +152,23 @@ $(window).on('load', function() {
         messageDiv = $("<div></div>").html(`
           <div class="rating" id="${msgObj.id}">
             <span class="upvote vote">&#x25b2</span>
-            <span class="vote">${msgObj.rating}</span>
+            <span class="vote curRatingVal">${msgObj.rating}</span>
             <span class="downvote vote">&#x25b2</span>
           </div>
           <div>
-            <div class="profilePicture">
-              <img src="${localStorage.getItem('profileUrl')}" alt="Profilbild" class="messagePicture">
-              <h2>${msgObj.name}</h2>
-            </div>
+            <h2>${msgObj.name}</h2>
             <p class="time">${msgObj.time}</p>
           </div>`);
         messageDiv.append(messageParagraf);
       }
+
+      /*
+
+      <div class="profilePicture">
+        <img src="${localStorage.getItem('profileUrl')}" alt="Profilbild" class="messagePicture">
+        <h2>${msgObj.name}</h2>
+      </div>
+      */
 
       if (localStorage.getItem('username') != null && createMessage) {
         if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
@@ -438,11 +443,17 @@ function upvote(id, votes) {
         console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
         db.ref('ratings/' + id).push(username);
+        let curVal = $('#'+id).find('.curRatingVal').text();
+        let newVal = Number(curVal += 1);
+        $('#'+id).find('.curRatingVal').text(newVal);
       }
     } else {
       console.log("Just voted...");
       db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
       db.ref('ratings/' + id).push(username);
+      let curVal = $('#'+id).find('.curRatingVal').text();
+      let newVal = Number(curVal += 1);
+      $('#'+id).find('.curRatingVal').text(newVal);
     }
   });
 }
@@ -459,13 +470,39 @@ function updateRating(id){
 
 // Rösta -1
 function downvote(id, votes) {
+  console.log("Initializing downvote...");
+  db.ref('ratings/' + id).once('value', function(snapshot) {
 
-  if (ratedUsers.includes(localStorage.getItem('username'))) {
-    console.log("You can't rate again");
-  } else {
-    db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
-    ratedUsers.push(localStorage.getItem('username'));
-  }
+    let data = snapshot.val();
+    let username = localStorage.getItem('username');
+    let voted = false;
+
+    if (data != null) { // Det finns något
+      for (let obj in data) { // Gå igenom användarna som röstat på posten
+        if (data[obj] == username) { // Om användarnamnet hittas. Sätt redan röstat till sant
+          voted = true;
+        }
+      }
+
+      if (voted) {
+        console.log("Du kan inte rösta på detta meddelande igen!");
+      } else {
+        console.log("Just voted...");
+        db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
+        db.ref('ratings/' + id).push(username);
+        let curVal = $('#'+id).find('.curRatingVal').text();
+        let newVal = Number(curVal -= 1);
+        $('#'+id).find('.curRatingVal').text(newVal);
+      }
+    } else {
+      console.log("Just voted...");
+      db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
+      db.ref('ratings/' + id).push(username);
+      let curVal = $('#'+id).find('.curRatingVal').text();
+      let newVal = Number(curVal -= 1);
+      $('#'+id).find('.curRatingVal').text(newVal);
+    }
+  });
 }
 
 
