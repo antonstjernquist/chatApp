@@ -194,6 +194,7 @@ $(window).on('load', function() {
     provider.then(data => {
       console.log("You are logged in as " + data.email)
       localStorage.setItem('username', data.email);
+      location.reload();
     }).catch(event => console.log(event.message));
   });
 
@@ -206,6 +207,7 @@ $(window).on('load', function() {
     provider.then(data => {
       console.log("Account created data = ", data);
       localStorage.setItem('username', data.email);
+      location.reload();
     }).catch(e => console.log(e.message));
   });
   $('#btnLogout').hide()
@@ -285,9 +287,6 @@ $(window).on('load', function() {
       $('#formBtn').text('Log in to send message');
     }
   })
-  setTimeout(function(){
-    updateRating('-L4_Fo8HCR_U8ScKIPVm', 15);
-  }, 3000);
 
 }); // End of callback
 
@@ -444,17 +443,11 @@ function upvote(id, votes) {
         console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
         db.ref('ratings/' + id).push(username);
-        let curVal = parseInt($('#'+id).find('.curRatingVal').text()); // String
-        let newVal = curVal += 1;
-        $('#'+id).find('.curRatingVal').text(newVal); // Sick selector appsolutt bo0m
       }
     } else {
       console.log("Just voted...");
       db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
       db.ref('ratings/' + id).push(username);
-      let curVal = parseInt($('#'+id).find('.curRatingVal').text());
-      let newVal = curVal += 1;
-      $('#'+id).find('.curRatingVal').text(newVal);
     }
   });
 }
@@ -481,17 +474,11 @@ function downvote(id, votes) {
         console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
         db.ref('ratings/' + id).push(username);
-        let curVal = parseInt($('#'+id).find('.curRatingVal').text());
-        let newVal = parseInt(curVal -= 1);
-        $('#'+id).find('.curRatingVal').text(newVal);
       }
     } else {
       console.log("Just voted...");
       db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
       db.ref('ratings/' + id).push(username);
-      let curVal = parseInt($('#'+id).find('.curRatingVal').text());
-      let newVal = parseInt(curVal -= 1);
-      $('#'+id).find('.curRatingVal').text(newVal);
     }
   });
 }
