@@ -436,23 +436,22 @@ function upvote(id, votes) {
           voted = true;
         }
       }
-
       if (voted) {
         console.log("Du kan inte rösta på detta meddelande igen!");
       } else {
         console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
         db.ref('ratings/' + id).push(username);
-        let curVal = $('#'+id).find('.curRatingVal').text();
-        let newVal = Number(curVal += 1);
-        $('#'+id).find('.curRatingVal').text(newVal);
+        let curVal = parseInt($('#'+id).find('.curRatingVal').text()); // String
+        let newVal = curVal += 1;
+        $('#'+id).find('.curRatingVal').text(newVal); // Sick selector appsolutt bo0m
       }
     } else {
       console.log("Just voted...");
       db.ref('posts/' + id + "/rating").set(parseInt(votes) + 1);
       db.ref('ratings/' + id).push(username);
-      let curVal = $('#'+id).find('.curRatingVal').text();
-      let newVal = Number(curVal += 1);
+      let curVal = parseInt($('#'+id).find('.curRatingVal').text());
+      let newVal = curVal += 1;
       $('#'+id).find('.curRatingVal').text(newVal);
     }
   });
@@ -490,16 +489,16 @@ function downvote(id, votes) {
         console.log("Just voted...");
         db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
         db.ref('ratings/' + id).push(username);
-        let curVal = $('#'+id).find('.curRatingVal').text();
-        let newVal = Number(curVal -= 1);
+        let curVal = parseInt($('#'+id).find('.curRatingVal').text());
+        let newVal = parseInt(curVal -= 1);
         $('#'+id).find('.curRatingVal').text(newVal);
       }
     } else {
       console.log("Just voted...");
       db.ref('posts/' + id + "/rating").set(parseInt(votes) - 1);
       db.ref('ratings/' + id).push(username);
-      let curVal = $('#'+id).find('.curRatingVal').text();
-      let newVal = Number(curVal -= 1);
+      let curVal = parseInt($('#'+id).find('.curRatingVal').text());
+      let newVal = parseInt(curVal -= 1);
       $('#'+id).find('.curRatingVal').text(newVal);
     }
   });
