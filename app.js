@@ -116,16 +116,7 @@ $(window).on('load', function() {
         }
       }
 
-
-      //Update the rating
-      let domDiv = $("main > div > div:first-child");
-      let domID = domDiv.attr('id');
-      //console.log('The id is: ' + domID);
-      /*
-            if(msgObj.id == domID){
-              domDiv:nth-child(2).text(msgObj.rating);
-            }
-      */
+      //console.log('Vote passed');
       let messageDiv;
       let createMessage = true;
 
@@ -162,14 +153,6 @@ $(window).on('load', function() {
         messageDiv.append(messageParagraf);
       }
 
-      /*
-
-      <div class="profilePicture">
-        <img src="${localStorage.getItem('profileUrl')}" alt="Profilbild" class="messagePicture">
-        <h2>${msgObj.name}</h2>
-      </div>
-      */
-
       if (localStorage.getItem('username') != null && createMessage) {
         if (!displayedMessages.includes(msgObj.id)) { // Om listan inte innehåller id:et. Posta det!
           $('main').prepend(messageDiv);
@@ -180,6 +163,9 @@ $(window).on('load', function() {
       }
     }
   });
+
+
+
   $('.cross').click(function(event) {
     toggleModal();
   });
@@ -299,7 +285,9 @@ $(window).on('load', function() {
       $('#formBtn').text('Log in to send message');
     }
   })
-
+  setTimeout(function(){
+    updateRating('-L4_Fo8HCR_U8ScKIPVm', 15);
+  }, 3000);
 
 }); // End of callback
 
@@ -390,6 +378,20 @@ function logOut() {
 
 /* Functions */
 
+function updateRating(id, rating){
+  $('.rating').each(function(i,obj){
+    if(obj.id == id){
+      obj.children[1].innerText = rating;
+    };
+  });
+}
+
+db.ref('posts/').on('child_changed', function(snapshot){
+  let data = snapshot.val();
+  updateRating(data.id, data.rating);
+});
+
+
 //Scroll Function
 (function($) {
   $.fn.goTo = function() {
@@ -456,16 +458,6 @@ function upvote(id, votes) {
     }
   });
 }
-/*
-function updateRating(id){
-  db.ref('posts/' + id).once('value', function(snapshot){
-
-  }){
-
-  }
-}
-*/
-
 
 // Rösta -1
 function downvote(id, votes) {
